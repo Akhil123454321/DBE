@@ -3,3 +3,6 @@
 _Database Explorer_ is a CMDB application which allows users to view database details, edit existing database details, and new database details, and remove existing database details.
 
 This application is being made for my **Grade 12 IBDP Computer Science HL Internal Assessment**, for which my client is my father.
+
+For those who want my final documents for reference, you can find them on this website -->
+**_[website]_**
