@@ -1,22 +1,31 @@
-/////////////////////////////////////////////////////PRE-REQUISITES///////////////////////////////////////////
 /*  requiring the dotenv module to access the environmental 
     variables declared there
 */ 
-require('dotenv').config();
+require('dotenv').config()
 
-//importing libraries required for the code
-const express = require('express');
-const mysql = require('mysql');
+const express = require('express')
+const mysql = require('mysql')
+const nodemailer = require('nodemailer')
 const bodyparser = require('body-parser')
-const mailer = require('nodemailer')
+const bcrypt = require('bcrypt')
 const path = require('path')
-const bcrypt = require('bcrypt');
-const { query } = require('express');
+const passwordValidator = require('password-validator')
+
+//setting up password validator
+var schema = new passwordValidator();
+schema
+.is().min(8)
+.has().uppercase()
+.has().lowercase()
+.has().digits(4)
+.has().symbols(1)
+.is().not().oneOf(['Passw0rd', 'Password', 'Password123'])
 
 //starting the app
 const app = express();
 
 //code to connect the app with backend MYSQL DB
+//code to create a connection with a datbase with the below configurations
 var connection = mysql.createConnection({
     host     : 'localhost',
     user     : 'Akhil',
@@ -24,12 +33,17 @@ var connection = mysql.createConnection({
     database : 'DBE'
   });
 
-  connection.connect((error)=>
+  //connectin to database using the connect method
+  connection.connect((error) =>
   {
+      /*if error when connecting to DB, error will be captured and logged on the terminal as a JSON string, and required text is logged to let 
+      user know what happened */
       if(error)
       {
-          console.log('Accounts DB connection failed' + JSON.stringify(error, undefined, 2));
+          console.log('Accounts DB connection failed' + JSON.stringify(error, undefined, 2)); 
       }
+
+      /* if there is no error, the DB connects to the front-end and the required text is logged to let the user know what happened*/
       else {
           console.log('Accounts DB connection was successful');
       }
@@ -42,81 +56,64 @@ var urlencodedParser = bodyparser.urlencoded({ extended: false })
  app.use(express.static(__dirname + '/web/PUBLIC/'))
 
 //setting up the view engine
-app.set('views', path.join(__dirname + '/templates/PUBLIC/'))
+app.set('views', path.join(__dirname + '/web/PUBLIC/'))
 app.set('view engine', 'hbs')
 
 
-/////////////////////////////////////////////////////////ROUTING///////////////////////////////////////////
-//index page start
-app.get('/', (request, response) => {
-    response.render(__dirname + '/web/PUBLIC/index.hbs')
-})
-//index page end
+//////////////////////////////ROUTES
 
-//login page start
-app.get('/login', (request, response)=>{
-    response.render(__dirname + "/web/PUBLIC/login.hbs")
+//index page
+app.get('/', (request, response) =>{
+    response.render("index")
 })
 
-app.post('/login', urlencodedParser, (request, response)=>{
-    connection.query("SELECT * ")
-})
-//login page end
-
-//sign up page start
+//signup page
 app.get('/request-for-account', (request, response) =>{
-    response.render(__dirname + "/web/PUBLIC/signup.hbs")
+    response.render('signup')
 })
+app.post('/request-for-account', urlencodedParser, async (request, response) =>{
+    console.log(request.body);
 
-app.post('/request-for-account', urlencodedParser, (request, response) =>{
-    console.log(request.body)
-
-    QUERY_str = String("SELECT * FROM user_details WHERE username = '"+request.body.username+"' OR email = '"+request.body.email+"'")
-    connection.query(QUERY_str,  (error, results)=>{
-        if(error){
+    connection.query("SELECT * FROM user_details WHERE username = '"+request.body.username+"' OR email = '"+request.body.email+"'", (error, result)=>{
+        if(error)
+        { 
             console.log(error);
         }
-        else if (results.length > 0){
-            response.render(__dirname + "/web/PUBLIC/signup.hbs", {message: "Account with this email or username already exists!"})
+        else if (result.length > 0){
+            response.render("signup", {message: "Account with this username or email already exists!"})
         }
-        else if (results.length < 0){
-            if(request.body.pass === request.body.confirm_pass){
-                salt = bcrypt.genSalt();
-                hashedPass = bcrypt.hash(request.body.pass, salt)
-
-                new_QUERY_str = "INSERT INTO user_details VALUES ('"+request.body.username+"', '"+request.body.email+"', '"+hashedPass+"', '"+request.body.type+"', pending"
-                connection.query(new_QUERY_str, (err, results) =>{
-                    if(err){
-                        console.log(err);
-                    }
-                    else if (results){
-                        response.render(__dirname + "/web/PUBLIC/submission_success.hbs")
-                    }
-                })
+        else if (result.length === 0){
+            email = request.body.email
+            var parts = email.split('@')
+            if (parts[1] === "cgi"){
+                console.log("EMAIL IS VALID!!!!");
             }
             else{
-                response.render(__dirname + "/web/PUBLIC/signup.hbs", {message: "Passwords do not match!"})
+                response.render('signup')
             }
-
         }
     })
-})
-//sign up page end
+    if(request.body.pass != request.body.confirm_pass){
+        response.render('signup', {message: "Password and Confirm password fields need to be the same"})
+    }
+    else if(request.body.pass == "" || request.body.confirm_password == "" ){
+        response.render( 'signup', {message: "Password and confirm password cannot be empty"})
+    }
+    else{
+        if(schema.validate(request.body.pass)){
+            console.log("VALID PASSWORD HAS BEEN ENTERED!");
+        }
+        else{
+            response.render('signup', {message: "invalid password was entered!"})
+        }
+    }
 
-//404 error page start
-app.use((request, response, next) => {
-    var err = new Error('Page Not Found')
-    err.status = 404
-    next(err)
 })
-app.use((err, request, response, next) => {
-    response.status(err.status || 500)
-    response.render(__dirname + '/web/PUBLIC/404.hbs')
-})
-//404 error page end
 
-//setting the application's listener port
-const PORT = 3000
-app.listen(PORT, ()=>{
-    console.log("Application is listening on port "+PORT+"")
+
+
+const PORT = process.env.PORT || 3000
+app.listen(PORT, () =>{
+    console.log("App is listening on port '"+PORT+"'");
 })
+
