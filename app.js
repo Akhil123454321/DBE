@@ -1,8 +1,5 @@
-/*  requiring the dotenv module to access the environmental 
-    variables declared there
-*/ 
+//importing node modules
 require('dotenv').config()
-
 const express = require('express')
 const mysql = require('mysql')
 const nodemailer = require('nodemailer')
@@ -11,15 +8,19 @@ const bcrypt = require('bcrypt')
 const path = require('path')
 const passwordValidator = require('password-validator')
 
+//importing self made scripts 
+const scripts = require("./scripts")
+const { config } = require('dotenv')
+
 //setting up password validator
 var schema = new passwordValidator();
 schema
-.is().min(8)
-.has().uppercase()
-.has().lowercase()
-.has().digits(4)
-.has().symbols(1)
-.is().not().oneOf(['Passw0rd', 'Password', 'Password123'])
+.is().min(8) //ensuring the min length is 8 characters
+.has().uppercase() // checks for uppercase letters
+.has().lowercase() //checks for lowercase letters
+.has().digits(4) //checks whether atleast 4 digits are used
+.has().symbols(1) //checks whether atleast 1 symbol (special character) was used
+.is().not().oneOf(['Passw0rd', 'Password', 'Password123']) //ensures that the user provided password is not one of these
 
 //starting the app
 const app = express();
@@ -74,6 +75,8 @@ app.get('/request-for-account', (request, response) =>{
 app.post('/request-for-account', urlencodedParser, async (request, response) =>{
     console.log(request.body);
 
+    var truthCounter = 0
+
     connection.query("SELECT * FROM user_details WHERE username = '"+request.body.username+"' OR email = '"+request.body.email+"'", (error, result)=>{
         if(error)
         { 
@@ -84,12 +87,12 @@ app.post('/request-for-account', urlencodedParser, async (request, response) =>{
         }
         else if (result.length === 0){
             email = request.body.email
-            var parts = email.split('@')
-            if (parts[1] === "cgi"){
-                console.log("EMAIL IS VALID!!!!");
+            var splitString = scripts.splitStr(email, '@')
+            if(splitString[1] === "cgi.com"){
+                console.log("VALID EMAIL HAS BEEN ENTERED");
             }
             else{
-                response.render('signup')
+                response.render('signup', {message: "Only a CGI email needs to be used!"})
             }
         }
     })
@@ -102,10 +105,15 @@ app.post('/request-for-account', urlencodedParser, async (request, response) =>{
     else{
         if(schema.validate(request.body.pass)){
             console.log("VALID PASSWORD HAS BEEN ENTERED!");
+            truthCounter = truthCounter + 1
         }
         else{
             response.render('signup', {message: "invalid password was entered!"})
         }
+    }
+
+    if (truthCounter === 2){
+        response.render('submission_success')
     }
 
 })
