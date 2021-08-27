@@ -25,7 +25,6 @@
 <body class="bg-gradient-primary">
 
     <div class="container">
-
         <div class="card o-hidden border-0 shadow-lg my-5">
             <div class="card-body p-0">
                 <!-- Nested Row within Card Body -->
@@ -36,6 +35,13 @@
                             <div class="text-center">
                                 <h1 class="h4 text-gray-900 mb-4">Request for an Account!</h1>
                             </div>
+
+                            {{#if signupFail}}
+                                <div class="alert alert-danger" style="text-align: center; height: auto; ">
+                                 <p>{{signupFail}}</p>
+                                </div>
+                            {{/if}}
+                            
                             <form class="user" method="POST" action="/signup">
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
@@ -65,12 +71,6 @@
                                     Register Account
                                 </button>
                                 <hr>
-                                <a href="index.hbs" class="btn btn-google btn-user btn-block">
-                                    <i class="fab fa-cuttlefish fa-fw"></i> Register with CGI
-                                </a>
-                                <a href="index.hbs" class="btn btn-facebook btn-user btn-block">
-                                    <i class="fas fa-bold fa-fw"></i> Register with Bell
-                                </a>
                             </form>
                             <hr>
                             <div class="text-center">
