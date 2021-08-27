@@ -67,8 +67,10 @@
                     <div class="bg-white py-2 collapse-inner rounded">
 <!--                        <h6 class="collapse-header">Custom Components:</h6>-->
                         <a class="collapse-item" href="../buttons.html">View DB</a>
-                        <a class="collapse-item" href="../cards.html">Edit DB</a>
-                        <a class="collapse-item" href="../cards.html">Search DB</a>
+                        {{#if message}}
+                            <a class="collapse-item" href="../cards.html">Edit DB</a>
+                            <a class="collapse-item" href="../cards.html">Search DB</a>
+                        {{/if}}
                     </div>
                 </div>
             </li>

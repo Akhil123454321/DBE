@@ -1,11 +1,12 @@
 //importing the required modules
+require('dotenv').config()
 const express = require('express')
 const bodyparser = require('body-parser')
 const path = require('path')
 const bcrypt = require('bcrypt')
 const passwordValidator = require('password-validator')
 const nodemailer = require('nodemailer')
-const { response, request } = require('express')
+const jwt = require('jsonwebtoken')
 
 //setting the new password validation schema
 var schema = new passwordValidator()
@@ -43,6 +44,19 @@ app.get('/login', (request, response)=>{
 })
 app.post('/login', urlencodedParser, (request, response)=>{
     console.log(request.body);
+
+    //authenticate the user 
+
+    const user = {email: request.body.email}
+
+    const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, (error, token)=>{
+        if(error){
+            console.error(error);
+        }
+        else{
+            console.log(token)
+        }
+    })
 })
 
 //signup route
@@ -67,19 +81,21 @@ app.post('/signup', urlencodedParser, (request, response)=>{
             if(result.length == 0){
                 response.render('success')
 
+                salt = bcrypt.genSalt(10)
+                hashedPass = bcrypt.hash()
+
                 var transporter = nodemailer.createTransport({
                     service: 'gmail',
                     auth:{
-                        user: 'akhilsagaran@gmail.com',
-                        pass: 'cwwbzcycuuxfopzk',
+                        user: process.env.MAIL_ID,
+                        pass: process.env.APP_PASS,
                     }
                 })
 
                 var mailDetails = {
-                    from: 'akhilsagaran@gmail.com',
-                    to: 'akhilskasturi@outlook.com',
+                    from: process.env.MAIL_ID,
+                    to: process.env.ADMIN_MAIL_ID,
                     subject: "Request for Account",
-                    text: "Hey. This is a test mail. I am akhil!!!",
                     html: `<!DOCTYPE html>
                     <html lang="en">
                     <head>
@@ -506,6 +522,7 @@ app.get('/admin-request-approve', (request, response)=>{
 app.get('/admin-request-reject', (request, response)=>{
     response.render('request_rej', {fname: request.body.fname, lname:request.body.lname})
 })
+
 //error page
 app.use((request, response, next) => {
     var err = new Error('Page Not Found')
@@ -517,8 +534,23 @@ app.use((err, request, response, next) => {
     response.render('error')
 })
 
+//additional functions
+//verify token function
+function verifyToken(request, response, next){
+    const tokenHeader = request.headers['authorization']
+    if(typeof tokenHeader !== "undefined"){
+        const access_token = tokenHeader.split(' ')[1]
+        request.token = access_token
+        next()
+    }
+    else{
+        //forbidden
+        response.sendStatus(403)
+    }
+}
 //setting the listener port
 const PORT = process.env.PORT || 5000
 app.listen(PORT, ()=>{
     console.log(`App is listening on port ${PORT}`);
 })
+
