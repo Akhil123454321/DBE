@@ -7,7 +7,6 @@ import flash from "connect-flash";
 import passport from "passport";
 import morgan from "morgan";
 import MongoStore from "connect-mongo";
-
 import { createAdminUser } from "./libs/createUser";
 import config from "./config";
 

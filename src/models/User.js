@@ -3,9 +3,10 @@ import bcrypt from "bcryptjs";
 
 const UserSchema = new Schema(
   {
-    name: { type: String, trim: true },
+    name: { type: String, trim: true, unique: true },
     email: { type: String, required: true, unique: true, trim: true },
     password: { type: String, required: true },
+    status: {type: String, required: true},
     date: { type: Date, default: Date.now },
   },
   {
