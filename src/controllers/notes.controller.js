@@ -1,18 +1,18 @@
-import Note from "../models/Note";
+import DB from "../models/Db";
 
 export const renderNoteForm = (req, res) => {
   res.render("notes/new-note");
 };
 
 export const createNewNote = async (req, res) => {
-  const { title, description } = req.body;
+  const { id, env, mon_yr_added, RFI_RFC, company, lob, host, os_id, dbms_type, port, cluster_id, dba_support_team, created_by, craeted_date } = req.body;
   const errors = [];
-  if (!title) {
-    errors.push({ text: "Please Write a Title." });
-  }
-  if (!description) {
-    errors.push({ text: "Please Write a Description" });
-  }
+  // if (!title) {
+  //   errors.push({ text: "Please Write a Title." });
+  // }
+  // if (!description) {
+  //   errors.push({ text: "Please Write a Description" });
+  // }
   if (errors.length > 0) {
     res.render("notes/new-note", {
       errors,
@@ -20,10 +20,9 @@ export const createNewNote = async (req, res) => {
       description,
     });
   } else {
-    const newNote = new Note({ title, description });
-    newNote.user = req.user.id;
-    await newNote.save();
-    req.flash("success_msg", "Note Added Successfully");
+    const newDB = new DB({ id, env, mon_yr_added, RFI_RFC, company, lob, host, os_id, dbms_type, port, cluster_id, dba_support_team, created_by, craeted_date });  
+    await newDB.save();
+    req.flash("success_msg", "DB Added Successfully");
     res.redirect("/notes");
   }
 };

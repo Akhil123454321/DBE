@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-
+import {Mongoose} from "mongoose";
 
 const DBSchema = new Schema(
   {
@@ -10,14 +10,13 @@ const DBSchema = new Schema(
     company: {type: String, trim: true},
     lob: {type: String, trim: true},
     host: {type: String, trim: true},
-    os_id: { type: mongoose.Schema.Types.ObjectId, ref: 'OS'},
+    os_id: { type: String, trim: true},
     dbms_type: {type: String, trim: true},
     port: {type: Number},
-    cluster_id: {type: mongoose.Schema.Types.ObjectId, ref:'Cluster'},
+    cluster_id: {type: String, trim: true},
     dba_support_team: {type: String, trim: true},
     created_by: {type: String, trim: true},
     created_date: {type: Date, default: Date.now}
-
   },
   {
     timestamps: true,

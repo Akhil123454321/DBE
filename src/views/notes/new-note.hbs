@@ -1,19 +1,65 @@
 <div class="col-md-4 mx-auto">
   <div class="card text-center">
     <div class="card-header">
-      <h3>New Note</h3>
+      <h3>New DB Record</h3>
     </div>
     <div class="card-body">
       <form action="/notes/new-note" method="POST">
         <div class="form-group">
-          <input type="text" name="title" class="form-control" placeholder="Title" autofocus/>
+          <input type="text" required name="id" class="form-control" placeholder="DB ID" autofocus/>
         </div>
         <div class="form-group">
-          <textarea name="description" class="form-control" placeholder="Description"></textarea>
+          <textarea required name="db_env" class="form-control" placeholder="DB Environment"></textarea>
         </div>
+        <div class="form-group">
+          <input type="text" required name="title" class="form-control" placeholder="Title" autofocus/>
+        </div>
+        <div class="form-group">
+          <textarea required name="mon_year_added" class="form-control" placeholder="Month and Year Added"></textarea>
+        </div>
+        <div class="form-group">
+          <input type="text" required name="rfi_rfc" class="form-control" placeholder="RFI_RFC#" autofocus/>
+        </div>
+        <div class="form-group">
+          <textarea required name="company" class="form-control" placeholder="Company"></textarea>
+        </div>
+        <div class="form-group">
+          <input type="text" required name="lob" class="form-control" placeholder="LOB" autofocus/>
+        </div>
+        <div class="form-group">
+          <textarea required name="host" class="form-control" placeholder="Host Name"></textarea>
+        </div>
+        <div class="form-group">
+          <input type="text" required name="os_id" class="form-control" placeholder="OS ID" autofocus/>
+        </div>
+        <div class="form-group">
+          <textarea required name="dbms_type" class="form-control" placeholder="DBMS Type"></textarea>
+        </div>
+        <div class="form-group">
+          <input type="text" required name="port" class="form-control" placeholder="DB Port" autofocus/>
+        </div>
+        <div class="form-group">
+          <textarea required name="cluster_id" class="form-control" placeholder="Cluster ID"></textarea>
+        </div>
+        <div class="form-group">
+          <input type="text" required name="dba_support" class="form-control" placeholder="DBA Support Team" autofocus/>
+        </div>
+        <div class="form-group">
+          <textarea required name="created_by" class="form-control" placeholder="Created By"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Created Date</label><input type="date" required name="created_date" class="form-control" placeholder="Created Date" autofocus/>
+        </div>
+        {{!-- <div class="form-group">
+          <textarea required name="updated_by" class="form-control" placeholder="Updated By"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Updated Date</label><input type="date" required name="updated_date" class="form-control" placeholder="Updated Date" autofocus/>
+        </div> --}}
+    
         <div class="form-group">
           <button class="btn btn-primary btn-block" type="submit">
-            Save
+            Add
           </button>
         </div>
       </form>
