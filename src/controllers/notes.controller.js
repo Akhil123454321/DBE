@@ -5,7 +5,7 @@ export const renderNoteForm = (req, res) => {
 };
 
 export const createNewNote = async (req, res) => {
-  const { id, env, mon_yr_added, RFI_RFC, company, lob, host, os_id, dbms_type, port, cluster_id, dba_support_team, created_by, craeted_date } = req.body;
+  const {id, env, mon_yr_added, RFI_RFC, company, lob, host, os_id, dbms_type, port, cluster_id, dba_support_team, created_by, craeted_date } = req.body;
   const errors = [];
   // if (!title) {
   //   errors.push({ text: "Please Write a Title." });
@@ -23,7 +23,7 @@ export const createNewNote = async (req, res) => {
     const newDB = new DB({ id, env, mon_yr_added, RFI_RFC, company, lob, host, os_id, dbms_type, port, cluster_id, dba_support_team, created_by, craeted_date });  
     await newDB.save();
     req.flash("success_msg", "DB Added Successfully");
-    res.redirect("/notes");
+    res.redirect("/");
   }
 };
 

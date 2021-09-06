@@ -27,7 +27,7 @@ export const singup = async (req, res) => {
     errors.push({ text: "Passwords do not match." });
   }
   if (result.length > 0) {
-    errors.push({text: "Password fails to meet the following requirements: ", result});
+    errors.push({text: "Password fails to meet the requirements: ", result});
   }
   if(email.split('@')[1] !== "cgi.com"){
     if(email.split('@')[1] !== "bell.ca"){
@@ -55,8 +55,32 @@ export const singup = async (req, res) => {
       const newUser = new User({ name, email, password, status });
       newUser.password = await newUser.encryptPassword(password);
       await newUser.save();
-      req.flash("success_msg", "Your request has been sent. ");
-      res.redirect("/");
+      // req.flash("success_msg", "Your request has been sent. ");
+      // res.redirect("/");
+      var transporter = nodemailer.createTransport({
+        service:'gmail',
+        auth:{
+          user: "akhilsagaran@gmail.com",
+          pass: "cwwbzcycuuxfopzk",
+        }
+      })
+    
+      var mailDetails = {
+        from: "akhilskasturi@outlook.com",
+        to: "akhilsagaran@gmail.com",
+        subject: "Request for Account",
+        text: "hei",
+      }
+    
+      transporter.sendMail(mailDetails, (error, info)=>{
+        if(error){
+          console.error(error)
+        }
+        else{
+          req.flash("success_msg", "Email is sent ----->");
+          res.redirect("/");
+        }
+      })
     }
   }
 };
@@ -64,7 +88,7 @@ export const singup = async (req, res) => {
 export const renderSigninForm = (req, res) => res.render("users/signin");
 
 export const signin = passport.authenticate("local", {
-  successRedirect: "/notes",
+  successRedirect: "/",
   failureRedirect: "/users/signin",
   failureFlash: true,
 });
@@ -74,5 +98,7 @@ export const logout = (req, res) => {
   req.flash("success_msg", "You are logged out now.");
   res.redirect("/");
 };
+
+
 
 export const success = (req, res)=> res.render(__dirname + "/views/users/success");
