@@ -15,3 +15,7 @@ body {
 .logo {
   width: 30%;
 }
+
+.table-wrapup{
+  overflow-y: scroll;
+}

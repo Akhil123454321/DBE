@@ -1,22 +1,23 @@
+
 import { Schema, model } from "mongoose";
-import {Mongoose} from "mongoose";
 
 const DBSchema = new Schema(
   {
-    id: { type: String, trim: true},
-    env: {type: String, trim: true},
-    mon_yr_added: {type: Date, default: Date.now,  trim: true },
+    db_id: { type: String, trim: true, unique:true},
+    db_env: {type: String, trim: true},
+    Mon_yr_added: {type: Date, default: Date.now,  trim: true },
     RFI_RFC : {type: String, trim:true},
     company: {type: String, trim: true},
-    lob: {type: String, trim: true},
-    host: {type: String, trim: true},
+    business_line: {type: String, trim: true},
+    host_name: {type: String, trim: true},
     os_id: { type: String, trim: true},
     dbms_type: {type: String, trim: true},
-    port: {type: Number},
+    db_port: {type: Number},
     cluster_id: {type: String, trim: true},
     dba_support_team: {type: String, trim: true},
     created_by: {type: String, trim: true},
-    created_date: {type: Date, default: Date.now}
+    created_date: {type: Date, default: Date.now},
+    updated_date: {type: Date, default: Date.now},
   },
   {
     timestamps: true,
@@ -24,5 +25,6 @@ const DBSchema = new Schema(
   }
 );
 
-
 export default model("DB", DBSchema);
+
+

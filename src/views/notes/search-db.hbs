@@ -1,3 +1,18 @@
+<form action="/notes/search" method="POST"></form>
+  <div class="card mx-auto">
+    <div class="card-body">
+      <h1>Search for a DB</h1>
+      <div class="form-group">
+            <input type="text" class="form-control" name="db_id" placeholder="Enter the DB ID">
+        </div>
+        <button class="btn btn-primary btn-block" type="submit">
+            Search 
+          </button>
+    </div>
+  </div>
+  </form>
+
+{{#if db_dets}}
 <div class="container-fluid">
   <div class="row">
     <div class="table-wrapup">
@@ -24,7 +39,7 @@
     </tr>
   </thead>
   <tbody>
-  {{#each dbs}}
+  {{#each db_dets}}
   <tr>
       <td scope="col">{{_id}}</td>
       <td scope="col">{{db_id}}</td>
@@ -48,12 +63,8 @@
       {{!-- <tr scope="col">{{updated_date}}</tr> --}}
   </tr>
   {{else}}
-  <div class="card mx-auto">
-    <div class="card-body">
-      <h1>Hello {{user.name}}</h1>
-      <p clsss="lead">There are not Notes yet.</p>
-      <a href="/notes/add" class="btn btn-success btn-block">Create One!</a>
-    </div>
+  <div class="alert alert-danger">
+      <p>No DB with this ID exists!</p>
   </div>
   {{/each}}
   </tbody>
@@ -61,3 +72,4 @@
   </div>
 </div>
 </div>
+{{/if}}

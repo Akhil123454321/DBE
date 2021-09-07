@@ -1,18 +1,15 @@
 import DB from "../models/Db";
+import Note from "../models/Note";
 
 export const renderNoteForm = (req, res) => {
   res.render("notes/new-note");
 };
 
+
 export const createNewNote = async (req, res) => {
-  const {id, env, mon_yr_added, RFI_RFC, company, lob, host, os_id, dbms_type, port, cluster_id, dba_support_team, created_by, craeted_date } = req.body;
+  const {db_id, db_env, Mon_yr_added, RFI_RFC, company, business_line, host_name, os_id, dbms_type, db_port, cluster_id, dba_support_team, created_by, craeted_date} = req.body;
+  const updated_date = Date.now();
   const errors = [];
-  // if (!title) {
-  //   errors.push({ text: "Please Write a Title." });
-  // }
-  // if (!description) {
-  //   errors.push({ text: "Please Write a Description" });
-  // }
   if (errors.length > 0) {
     res.render("notes/new-note", {
       errors,
@@ -20,38 +17,46 @@ export const createNewNote = async (req, res) => {
       description,
     });
   } else {
-    const newDB = new DB({ id, env, mon_yr_added, RFI_RFC, company, lob, host, os_id, dbms_type, port, cluster_id, dba_support_team, created_by, craeted_date });  
+    const newDB = new DB({ db_id, db_env, Mon_yr_added, RFI_RFC, company, business_line, host_name, os_id, dbms_type, db_port, cluster_id, dba_support_team, created_by, craeted_date, updated_date});  
     await newDB.save();
     req.flash("success_msg", "DB Added Successfully");
-    res.redirect("/");
+    res.redirect("/notes");
   }
 };
 
 export const renderNotes = async (req, res) => {
-  const notes = await Note.find({ user: req.user.id })
+
+  const dbs = await DB.find()
     .sort({ date: "desc" })
     .lean();
-  res.render("notes/all-notes", { notes });
+
+  res.render("notes/all-notes", { dbs });
 };
 
-export const renderEditForm = async (req, res) => {
-  const note = await Note.findById(req.params.id).lean();
-  if (note.user != req.user.id) {
-    req.flash("error_msg", "Not Authorized");
-    return res.redirect("/notes");
-  }
-  res.render("notes/edit-note", { note });
+
+export const renderEditForm = async (id, res) => {
+  const db = await DB.findById(id).lean();
+  res.render("notes/edit-note", { db });
 };
 
 export const updateNote = async (req, res) => {
-  const { title, description } = req.body;
-  await Note.findByIdAndUpdate(req.params.id, { title, description });
-  req.flash("success_msg", "Note Updated Successfully");
-  res.redirect("/notes");
+  const { id, env, mon_yr_added, RFI_RFC, company, lob, host, os_id, dbms_type, port, cluster_id, dba_support_team, created_by, craeted_date } = req.body;
+  await DB.findByIdAndUpdate(req.params.id, { id, env, mon_yr_added, RFI_RFC, company, lob, host, os_id, dbms_type, port, cluster_id, dba_support_team, created_by, craeted_date });
+  req.flash("success_msg", "DB Updated Successfully");
+  res.redirect("/");
 };
+
 
 export const deleteNote = async (req, res) => {
   await Note.findByIdAndDelete(req.params.id);
   req.flash("success_msg", "Note Deleted Successfully");
   res.redirect("/notes");
 };
+
+export const renderSearchPage = (req, res)=> res.render("notes/search-db");
+
+export const searchDb = async (req, res) =>{
+  const db_id = req.body;
+  const db_dets = await DB.find({db_id : db_id})
+  res.render("notes/search-db", {db_dets})
+}

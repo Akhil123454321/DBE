@@ -1,0 +1,69 @@
+DBE
+  |- src
+    |- config
+      |- passport.js
+    |- controllers
+      |- index.controller.js
+      |- users.controller.js
+      |- notes.controller.js
+    |- helpers
+      |- auth.js
+    |- libs
+      |- createUser.js
+    |- models
+      |- Db.js
+      |- User.js
+    |- public
+      |- css
+        |- main.css
+      |- img
+        |- logo-black.png
+        |- logo.png
+    |- routes
+      |- index.routes.js
+      |- notes.routes.js
+      |- users.routes.js
+    |- views
+      |- layouts
+        |- main.hbs
+      |- notes
+        |- all-notes.hbs
+        |- edit-note.hbs
+        |- new-note.hbs
+      |- partials
+        |- errors.hbs
+        |- messages.hbs
+        |- navigation.hbs
+      |- users
+        |- signin.hbs
+        |- signup.hbs
+      |- 404.hbs
+      |- about.hbs
+      |- index.js
+
+  |- app.js
+  |- config.js
+  |- database.js
+  |- index.js
+  |- .babelrc
+  |- .dockerignore
+  |- .env
+  |- .gitignore
+  |- package-lock.json
+  |- package.json
+  |- README.md
+  |- node_modules
+    |- *all files pertaining to the installed node modules/dependencies*
+
+
+
+
+
+
+
+
+
+
+
+
+

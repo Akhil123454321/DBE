@@ -8,6 +8,7 @@ const UserSchema = new Schema(
     password: { type: String, required: true },
     status: {type: String, required: true},
     date: { type: Date, default: Date.now },
+    role: {type: String, default: "normal"},
   },
   {
     timestamps: true,
@@ -17,7 +18,8 @@ const UserSchema = new Schema(
 
 UserSchema.methods.encryptPassword = async (password) => {
   const salt = await bcrypt.genSalt(10);
-  return await bcrypt.hash(password, salt);
+
+  return await bcrypt.hash(password, salt); 
 };
 
 UserSchema.methods.matchPassword = async function (password) {

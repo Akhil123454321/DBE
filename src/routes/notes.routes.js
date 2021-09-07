@@ -6,8 +6,11 @@ import {
   renderEditForm,
   updateNote,
   deleteNote,
+  searchDb,
+  renderSearchPage,
 } from "../controllers/notes.controller";
-import { isAuthenticated } from "../helpers/auth";
+import { renderSecurityPage } from "../controllers/users.controller";
+import { isAuthenticated} from "../helpers/auth";
 
 const router = Router();
 
@@ -26,5 +29,10 @@ router.put("/notes/edit-note/:id", isAuthenticated, updateNote);
 
 // Delete Notes
 router.delete("/notes/delete/:id", isAuthenticated, deleteNote);
+
+//Search Notes
+router.get("/notes/search", isAuthenticated, renderSearchPage);
+
+router.post("/notes/search", isAuthenticated, searchDb);
 
 export default router;

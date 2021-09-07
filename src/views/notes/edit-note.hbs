@@ -10,20 +10,86 @@
 <div class="col-md-4 mx-auto">
   <div class="card">
     <div class="card-header">
-      <h3>Edit Note</h3>
+      <h3>Edit DB</h3>
     </div>
     <div class="card-body">
-      <form action="/notes/edit-note/{{note._id}}?_method=PUT" method="POST">
+      <form action="/notes/edit-note/{{node._id}}?_method=PUT" method="POST">
         <input type="hidden" name="_method" value="PUT">
         <div class="form-group">
-          <input type="text" name="title" class="form-control" value="{{note.title}}"/>
+          <input type="text" name="title" class="form-control" value="{{db.title}}"/>
         </div>
         <div class="form-group">
-          <textarea name="description" class="form-control">{{note.description}}</textarea>
+          <textarea name="description" class="form-control">{{db.env}}</textarea>
+        </div>
+        <div class="form-group">
+          <input type="text" name="title" class="form-control" value="{{db.title}}"/>
+        </div>
+        <div class="form-group">
+          <textarea name="description" class="form-control">{{db.mon_year_added}}</textarea>
+        </div>
+        <div class="form-group">
+          <input type="text" name="title" class="form-control" value="{{db.title}}"/>
+        </div>
+        <div class="form-group">
+          <textarea name="description" class="form-control">{{db.RFI_RFC}}</textarea>
+        </div>
+        <div class="form-group">
+          <input type="text" name="title" class="form-control" value="{{db.title}}"/>
+        </div>
+        <div class="form-group">
+          <textarea name="description" class="form-control">{{db.company}}</textarea>
+        </div>
+        <div class="form-group">
+          <input type="text" name="title" class="form-control" value="{{db.title}}"/>
+        </div>
+        <div class="form-group">
+          <textarea name="description" class="form-control">{{db.lob}}</textarea>
+        </div>
+        <div class="form-group">
+          <textarea name="description" class="form-control">{{db.host}}</textarea>
+        </div>
+        <div class="form-group">
+          <input type="text" name="title" class="form-control" value="{{db.title}}"/>
+        </div>
+        <div class="form-group">
+          <textarea name="description" class="form-control">{{db.os_id}}</textarea>
+        </div>
+        <div class="form-group">
+          <input type="text" name="title" class="form-control" value="{{db.title}}"/>
+        </div>
+        <div class="form-group">
+          <textarea name="description" class="form-control">{{db.dbms_type}}</textarea>
+        </div>
+        <div class="form-group">
+          <input type="text" name="title" class="form-control" value="{{db.title}}"/>
+        </div>
+        <div class="form-group">
+          <textarea name="description" class="form-control">{{db.port}}</textarea>
+        </div>
+        <div class="form-group">
+          <textarea name="description" class="form-control">{{db.cluster_id}}</textarea>
+        </div>
+        <div class="form-group">
+          <input type="text" name="title" class="form-control" value="{{db.title}}"/>
+        </div>
+        <div class="form-group">
+          <textarea name="description" class="form-control">{{db.dba_support_team}}</textarea>
+        </div>
+        <div class="form-group">
+          <input type="text" name="title" class="form-control" value="{{db.title}}"/>
+        </div>
+        <div class="form-group">
+          <textarea name="description" class="form-control">{{db.created_by}}</textarea>
+        </div>
+        <div class="form-group">
+          <input type="text" name="title" class="form-control" value="{{db.title}}"/>
+        </div>
+        <div class="form-group">
+          <textarea name="description" class="form-control">{{db.created_date}}</textarea>
         </div>
         <div class="form-group">
           <button class="btn btn-primary btn-block" type="submit">
-            Save
+            Update
           </button>
         </div>
       </form>

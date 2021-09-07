@@ -18,19 +18,25 @@ export const renderSignUpForm = (req, res) => res.render("users/signup");
 export const singup = async (req, res) => {
   let errors = [];
   const { name, email, password, confirm_password } = req.body;
+  console.log(req.body);
+
   const domain = email.split('@')[1]
+
   const result = schema.validate(password, {list: true})
+
   console.log(result)
   console.log(domain)
 
   if (password != confirm_password) {
     errors.push({ text: "Passwords do not match." });
   }
+
   if (result.length > 0) {
     errors.push({text: "Password fails to meet the requirements: ", result});
   }
-  if(email.split('@')[1] !== "cgi.com"){
-    if(email.split('@')[1] !== "bell.ca"){
+
+  if(email.split('@')[1] !== "cgi.com") {
+    if(email.split('@')[1] !== "bell.ca") {
       errors.push({ text: "Invalid email entered. "})
     }
   }
@@ -47,16 +53,23 @@ export const singup = async (req, res) => {
     // Look for email coincidence
     const emailUser = await User.findOne({ email: email });
     if (emailUser) {
+
       req.flash("error_msg", "The Email is already in use.");
+
       res.redirect("/users/signup");
     } else {
       // Saving a New User
+      const role = "";
+      if(email == "admin@cgi.com"){
+        if(email == "admin@bell.ca"){
+          role = "admin";
+        }
+      }
       const status = "pending"
-      const newUser = new User({ name, email, password, status });
+      const newUser = new User({ name, email, password, status, role });
       newUser.password = await newUser.encryptPassword(password);
-      await newUser.save();
-      // req.flash("success_msg", "Your request has been sent. ");
-      // res.redirect("/");
+      await newUser.save();  
+
       var transporter = nodemailer.createTransport({
         service:'gmail',
         auth:{
@@ -69,7 +82,9 @@ export const singup = async (req, res) => {
         from: "akhilskasturi@outlook.com",
         to: "akhilsagaran@gmail.com",
         subject: "Request for Account",
-        text: "hei",
+        html: `<h1> Request for Account </h1>
+               <p>${newUser.name} (${newUser.email}) is requesting for an account.</p>
+               <a href =  "http://localhost:4000/"> Click here to approve the request </a>`,
       }
     
       transporter.sendMail(mailDetails, (error, info)=>{
@@ -77,7 +92,7 @@ export const singup = async (req, res) => {
           console.error(error)
         }
         else{
-          req.flash("success_msg", "Email is sent ----->");
+          req.flash("success_msg", "Email is sent -----> " + info.response);
           res.redirect("/");
         }
       })
@@ -100,5 +115,15 @@ export const logout = (req, res) => {
 };
 
 
-
-export const success = (req, res)=> res.render(__dirname + "/views/users/success");
+export const renderSecurityPage = (req, res)=> res.render("users/security");
+export const securityCheck = async (req, res)=>{
+  const {email, password} = req.body;
+  const user_role = await User.findOne( {email : email}, {password : 1, role : 1, _id : 0});
+  if (user_role.role == "admin"){
+    res.redirect("/notes/search-db")
+  }
+  else{
+    req.flash("error_msg", "You are not authorized.")
+    res.redirect("/notes")
+  }
+}

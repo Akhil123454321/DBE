@@ -1,3 +1,5 @@
+
+
 export const isAuthenticated = (req, res, next) => {
   if (req.isAuthenticated()) {
     return next();
@@ -5,3 +7,6 @@ export const isAuthenticated = (req, res, next) => {
   req.flash("error_msg", "Not Authorized.");
   res.redirect("/users/signin");
 };
+
+
+
