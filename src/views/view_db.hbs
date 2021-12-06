@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  	<title>Table 03</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
+
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	
+	<link rel="stylesheet" href="../table/css/style.css">
+
+	</head>
+	<body>
+	<section class="ftco-section">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-md-6 text-center mb-5">
+					<h2 class="heading-section">Database Details</h2>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<h4 class="text-center mb-4"><a href="add-db-details">Add Data</a> | <a href="#">Search Data</a> | <a href="#">View Data</a></h4>
+					<div class="table-wrap">
+						<table class="table">
+					    <thead class="thead-primary">
+					      <tr>
+					        <th scope="col">ID</th>
+							<th scope="col">DB_ID</th>
+							<th scope="col">DB_Env</th>
+							<th scope="col">Mon/Yr Added</th>
+							<th scope="col">RFI_RFC#</th>
+							<th scope="col">Company</th>
+							<th scope="col">LOB</th>
+							<th scope="col">Host</th>
+							<th scope="col">OS_ID</th>
+							<th scope="col">DBMS_Type</th>
+							<th scope="col">DB_Port</th>
+							<th scope="col">Cluster_ID</th>
+							<th scope="col">DBA_Support_Team</th>
+							<th scope="col">Created_By</th>
+							<th scope="col">Created_Date</th>
+							<th scope="col">Updated_Date</th>
+					        <th scope="col">Edit</th>
+					      </tr>
+					    </thead>
+					    <tbody>
+							{{#each results}}
+					      <tr>
+					        <td scope="col">{{_id}}</td>
+							<td scope="col">{{db_id}}</td>
+							<td scope="col">{{db_env}}</td>
+							<td scope="col">{{Mon_yr_added}}</td>
+							<td scope="col">{{RFI_RFC}}</td>
+							<td scope="col">{{company}}</td>
+							<td scope="col">{{business_line}}</td>
+							<td scope="col">{{host_name}}</td>
+							<td scope="col">{{os_id}}</td>
+							<td scope="col">{{dbms_type}}</td>
+							<td scope="col">{{db_port}}</td>
+							<td scope="col">{{cluster_id}}</td>
+							<td scope="col">{{dba_support_team}}</td>
+							<td scope="col">{{created_by}}</td>
+							<td scope="col">{{created_date}}</td>
+							<td scope="col">{{updated_date}}</td>
+					        <td><a href="/edit-db-details:id" class="btn btn-primary">Edit</a></td>
+					      </tr>
+					      {{/each}}
+						  
+						  {{#if message}}
+						  	<div class="card mx-auto">
+								<div class="card-body">
+								<h1>There are no database details added!</h1>
+								<a href="/add-db-details" class="btn btn-success btn-block">Add a DB!</a>
+							</div>
+						{{/if}}
+					    </tbody>
+					  </table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<script src="../table/js/jquery.min.js"></script>
+  <script src="../table/js/popper.js"></script>
+  <script src="../table/js/bootstrap.min.js"></script>
+  <script src="../table/js/main.js"></script>
+
+	</body>
+</html>
+
