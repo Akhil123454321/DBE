@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-  	<title>Table 03</title>
+  	<title>View DB Data</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -22,7 +22,7 @@
 			</div>
 			<div class="row">
 				<div class="col-md-12">
-					<h4 class="text-center mb-4"><a href="add-db-details">Add Data</a> | <a href="#">Search Data</a> | <a href="#">View Data</a></h4>
+					<h4 class="text-center mb-4"><a href="add-db-details">Add Data</a> | <a href="/search-db-details">Search Data</a></h4>
 					<div class="table-wrap">
 						<table class="table">
 					    <thead class="thead-primary">
@@ -68,19 +68,18 @@
 					        <td><a href="/edit-db-details:id" class="btn btn-primary">Edit</a></td>
 					      </tr>
 					      {{/each}}
-						  
-						  {{#if message}}
-						  	<div class="card mx-auto">
-								<div class="card-body">
-								<h1>There are no database details added!</h1>
-								<a href="/add-db-details" class="btn btn-success btn-block">Add a DB!</a>
-							</div>
-						{{/if}}
 					    </tbody>
 					  </table>
 					</div>
 				</div>
 			</div>
+			{{#if message}}
+				<div class="card mx-auto">
+					<div class="card-body">
+					<h1>There are no database details added!</h1>
+					<a href="/add-db-details" class="btn btn-success btn-block">Add a DB!</a>
+				</div>
+			{{/if}}
 		</div>
 	</section>
 

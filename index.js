@@ -1,13 +1,16 @@
-require("dotenv").config()
+//importing all the required modules
+require("dotenv").config() //configuring dotenv access to access all the environment variables that were stored in the .env file into this js file
 const express = require("express")
 const mysql = require("mysql")
 const path = require("path")
 const body = require("body-parser")
 const passwordValidator = require('password-validator')
+const bcrypt = require("bcrypt")
+
+//importing custom functions from other js files into this js file
 const functions = require("./functions.js")
 const database_functions = require("./database.js")
-const bcrypt = require("bcrypt")
-const e = require("express")
+
 
 //starting the app
 var app = express()
@@ -29,7 +32,6 @@ var connection = mysql.createConnection({
     password : process.env.DB_PASS || '',
     database : 'cs_ia'
   });
-
 database_functions.connect_db()
 
 //setting the new password validation schema
@@ -44,53 +46,65 @@ database_functions.connect_db()
       .has().symbols(1) //password must have at least 1 special character
       .is().not().oneOf(['Password', 'Password123', 'temp123']) //password can not be one of these passwords
 
+//index route
 app.get("/", (request, response)=>{
     response.render("main")
 })
 
+//account request route
 app.get("/request-account", (request, response)=>{
     response.render("request")
 })
 app.post("/request-account", urlencodedParser, (request, response)=>{
-    fname = request.body.first_name
     console.log(request.body);
-    
-    var email_domain = functions.split_string(request.body.email, "@")
-    if(email_domain === "cgi.com"){
-        if(pass_result = functions.check_pass(request.body.password, request.body.re_password)){
-            console.log("Passwords match");
-            
-            validation_result = schema.validate(request.body.password, {list:true})
-            if(validation_result.length > 0){
-                console.log(validation_result);
-                response.render("request", {message: `Password does not meet the following requirements: ${validation_result}`})
+    console.log(functions.split_string(request.body.email, "@"));
+    console.log(functions.check_email_domain(functions.split_string(request.body.email, "@")));
+
+    if(functions.check_email_domain(functions.split_string(request.body.email, "@"))){
+        connection.query(`SELECT * FROM user_details WHERE fname = '${request.body.first_name}' OR lname = '${request.body.lname}' OR email = '${request.body.email}'`, (error, results)=>{
+            if(error){console.error(error)}
+            else if(results.length > 0){
+                response.render("request", {message: "Account already exists!"})
             }
             else{
-                bcrypt.genSalt(10, (error, salt)=>{
-                    if(error){console.error(error);}
+                if(functions.check_pass(request.body.password, request.body.re_password)){
+                    console.log("Passwords Match");
+
+                    validation_result = schema.validate(request.body.password, {list: true})
+                    if(validation_result.length > 0){
+                        console.log(validation_result);
+                        response.render("request", {message: `Password does not meet the following requirements ${validation_result}`})
+                    }
                     else{
-                        bcrypt.hash(request.body.password, salt, (error, hash)=>{
+                        bcrypt.genSalt(10, (error, salt)=>{
                             if(error){console.error(error);}
                             else{
-                                database_functions.insert_details(request.body.first_name, request.body.last_name, request.body.email, hash)
-                                response.redirect("/login")
+                                bcrypt.hash(request.body.password, salt, (error, hash)=>{
+                                    if(error){console.error(error);}
+                                    else{
+                                        console.log(hash);
+                                        database_functions.insert_user_details(request.body.first_name, request.body.last_name, request.body.email, hash)
+
+                                        response.redirect("/login")
+                                    }
+                                })
                             }
                         })
                     }
-                })
+                }
+                else{
+                    response.render("request", {message: "Passwords do not match!"})
+                }
             }
-        }
-        else{
-            console.log("Passwords dont match");
-        }
+        })
     }
     else{
-        response.render("request", {message: "Invalid Email entered!"})
+        response.render("request", {message: "Invalid email!"})
+        console.log("invalid email");
     }
-    
-
 })
 
+//login route
 app.get("/login", (request, response)=>{
     response.render("login")
 })
@@ -114,23 +128,14 @@ app.post("/login", urlencodedParser, (request, response)=>{
             response.render("login", {message: "Invalid email or password!"})
         }
     })
-    
 })
 
+//view db details route -- only accessible to users who have logged in
 app.get("/view-db-details", (request, response)=>{
-
-    // connection.query("SELECT * FROM db_details", (error, results)=>{
-    //     if(error){console.error(error)}
-    //     else if(results.length > 0){
-    //         response.render("table_page", { results })
-    //     }
-    //     else{
-    //         response.render("table_page", { message })
-    //     }
-    // })
     response.render("view_db")
 })
 
+//add db details route -- only accesible to admin role users
 app.get("/add-db-details", (request, response)=>{
     response.render("add_db")
 })
@@ -138,6 +143,15 @@ app.post("/add-db-details", urlencodedParser, (request, response)=>{
     console.log(request.body);
 })
 
+//search db details route -- only accessible to users who have logged in
+app.get("/search-db-details", (request, response)=>{
+    response.render("search_db")
+})
+app.post("/search-db-details", urlencodedParser, (request, response)=>{
+    console.log(request.body);
+})
+
+//listener port details
 var PORT = process.env.PORT || 4040
 app.listen(PORT, ()=>{
     console.log(`App listening on port ${PORT}`);

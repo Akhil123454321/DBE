@@ -22,9 +22,9 @@ function connect_db(){
   });
 }
 
-function insert_details(fname, lname, email, pass){
-    var status = "pending"
-    var query = `INSERT INTO user_details (fname, lname, email, pass, status) VALUES('${fname}', '${lname}', '${email}', '${pass}', '${status}')`
+function insert_user_details(fname, lname, email, pass){
+    var role = "pending"
+    var query = `INSERT INTO user_details (fname, lname, email, pass, role) VALUES('${fname}', '${lname}', '${email}', '${pass}', '${role}')`
     connection.query(query, (error, result)=>{
         if(error){
             console.error(error);
@@ -35,5 +35,5 @@ function insert_details(fname, lname, email, pass){
     })
 }
 
-module.exports = {connect_db, insert_details}
-exports.connection = connection
+
+module.exports = {connect_db, insert_user_details}

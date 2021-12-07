@@ -35,10 +35,18 @@ function compare_pass(ogpass, hashedPass){
     })
 }
 
-
 function split_string(string, separator){
     string = string.split(separator)
-    return string
+    return string[1]
 }
 
-module.exports = {check_pass, hash_pass, compare_pass, split_string}
+function check_email_domain(email_domain){
+    if(email_domain === "cgi.com"){
+        return true
+    }
+    else{
+        return false
+    }
+}
+
+module.exports = {check_pass, hash_pass, compare_pass, split_string, check_email_domain}
