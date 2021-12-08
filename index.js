@@ -6,11 +6,11 @@ const path = require("path")
 const body = require("body-parser")
 const passwordValidator = require('password-validator')
 const bcrypt = require("bcrypt")
+const jwt = require("jsonwebtoken")
 
 //importing custom functions from other js files into this js file
 const functions = require("./functions.js")
 const database_functions = require("./database.js")
-
 
 //starting the app
 var app = express()
@@ -46,6 +46,9 @@ database_functions.connect_db()
       .has().symbols(1) //password must have at least 1 special character
       .is().not().oneOf(['Password', 'Password123', 'temp123']) //password can not be one of these passwords
 
+//setting up jwt
+app.use(express.json())
+
 //index route
 app.get("/", (request, response)=>{
     response.render("main")
@@ -61,7 +64,7 @@ app.post("/request-account", urlencodedParser, (request, response)=>{
     console.log(functions.check_email_domain(functions.split_string(request.body.email, "@")));
 
     if(functions.check_email_domain(functions.split_string(request.body.email, "@"))){
-        connection.query(`SELECT * FROM user_details WHERE fname = '${request.body.first_name}' OR lname = '${request.body.lname}' OR email = '${request.body.email}'`, (error, results)=>{
+        connection.query(`SELECT * FROM user_details WHERE fname = '${request.body.first_name}' AND lname = '${request.body.lname}' OR email = '${request.body.email}'`, (error, results)=>{
             if(error){console.error(error)}
             else if(results.length > 0){
                 response.render("request", {message: "Account already exists!"})
@@ -118,7 +121,12 @@ app.post("/login", urlencodedParser, (request, response)=>{
             console.log(results)
             if(bcrypt.compare(request.body.password, results[0].pass)){
                 console.log(true);
-                response.redirect("/view-db-details")
+
+                jwt.sign(request.body.email, process.env.ACCESS_TOKEN_SECRET, (error, token)=>{
+                    if(error){console.error(error);}
+                    else{ console.log(token);}
+                    response.redirect("/view-db-details")
+                })
             }
             else{
                 response.render("login", {message: "Invalid email or password!"})
@@ -149,6 +157,17 @@ app.get("/search-db-details", (request, response)=>{
 })
 app.post("/search-db-details", urlencodedParser, (request, response)=>{
     console.log(request.body);
+})
+
+//error page
+app.use((request, response, next) => {
+    var err = new Error('Page Not Found')
+    err.status = 404
+    next(err)
+})
+app.use((err, request, response, next) => {
+    response.status(err.status || 500)
+    response.render('error', {status: "404", message: "Oops! Page not found"})
 })
 
 //listener port details

@@ -49,4 +49,5 @@ function check_email_domain(email_domain){
     }
 }
 
+
 module.exports = {check_pass, hash_pass, compare_pass, split_string, check_email_domain}
