@@ -122,7 +122,7 @@ app.post("/login", urlencodedParser, (request, response)=>{
             if(bcrypt.compare(request.body.password, results[0].pass)){
                 console.log(true);
 
-                jwt.sign(request.body.email, process.env.ACCESS_TOKEN_SECRET, (error, token)=>{
+                jwt.sign({email: request.body.email}, process.env.ACCESS_TOKEN_SECRET, (error, token)=>{
                     if(error){console.error(error);}
                     else{ console.log(token);}
                     response.redirect("/view-db-details")
@@ -159,16 +159,16 @@ app.post("/search-db-details", urlencodedParser, (request, response)=>{
     console.log(request.body);
 })
 
-//error page
-app.use((request, response, next) => {
-    var err = new Error('Page Not Found')
-    err.status = 404
-    next(err)
-})
-app.use((err, request, response, next) => {
-    response.status(err.status || 500)
-    response.render('error', {status: "404", message: "Oops! Page not found"})
-})
+// //error page
+// app.use((request, response, next) => {
+//     var err = new Error('Page Not Found')
+//     err.status = 404
+//     next(err)
+// })
+// app.use((err, request, response, next) => {
+//     response.status(err.status || 500)
+//     response.render('error', {status: "404", message: "Oops! Page not found"})
+// })
 
 //listener port details
 var PORT = process.env.PORT || 4040

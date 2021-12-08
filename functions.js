@@ -1,4 +1,5 @@
 var bcrypt = require('bcrypt')
+var jwt = require('jsonwebtoken')
 
 function check_pass(ogpass, repass){
     if(ogpass == repass)
