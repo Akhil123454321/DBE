@@ -4,9 +4,7 @@ const express = require("express")
 const mysql = require("mysql")
 const path = require("path")
 const body = require("body-parser")
-const passwordValidator = require('password-validator')
 const bcrypt = require("bcrypt")
-const jwt = require("jsonwebtoken")
 
 //importing custom functions from other js files into this js file
 const functions = require("./functions.js")
@@ -33,18 +31,6 @@ var connection = mysql.createConnection({
     database : 'cs_ia'
   });
 database_functions.connect_db()
-
-//setting the new password validation schema
-  var schema = new passwordValidator()
-  schema
-      .is().min(8) //password must have at least 8 characters
-      .is().max(16) //password can have at most 16 characters
-      .has().uppercase() //password must contain uppercase letters
-      .has().lowercase() //password must contain lower case letters
-      .has().not().spaces() //password must not have spaces
-      .has().digits(2) //password must have at least 2 digits
-      .has().symbols(1) //password must have at least 1 special character
-      .is().not().oneOf(['Password', 'Password123', 'temp123']) //password can not be one of these passwords
 
 //setting up jwt
 app.use(express.json())
@@ -73,8 +59,7 @@ app.post("/request-account", urlencodedParser, (request, response)=>{
                 if(functions.check_pass(request.body.password, request.body.re_password)){
                     console.log("Passwords Match");
 
-                    validation_result = schema.validate(request.body.password, {list: true})
-                    if(validation_result.length > 0){
+                    if(functions.validatePass(request.body.password)){
                         console.log(validation_result);
                         response.render("request", {message: `Password does not meet the following requirements ${validation_result}`})
                     }
@@ -122,11 +107,7 @@ app.post("/login", urlencodedParser, (request, response)=>{
             if(bcrypt.compare(request.body.password, results[0].pass)){
                 console.log(true);
 
-                jwt.sign({email: request.body.email}, process.env.ACCESS_TOKEN_SECRET, (error, token)=>{
-                    if(error){console.error(error);}
-                    else{ console.log(token);}
-                    response.redirect("/view-db-details")
-                })
+                response.redirect("/view-db-details")
             }
             else{
                 response.render("login", {message: "Invalid email or password!"})
@@ -158,17 +139,6 @@ app.get("/search-db-details", (request, response)=>{
 app.post("/search-db-details", urlencodedParser, (request, response)=>{
     console.log(request.body);
 })
-
-// //error page
-// app.use((request, response, next) => {
-//     var err = new Error('Page Not Found')
-//     err.status = 404
-//     next(err)
-// })
-// app.use((err, request, response, next) => {
-//     response.status(err.status || 500)
-//     response.render('error', {status: "404", message: "Oops! Page not found"})
-// })
 
 //listener port details
 var PORT = process.env.PORT || 4040
