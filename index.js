@@ -1,14 +1,18 @@
-//importing all the required modules
 require("dotenv").config() //configuring dotenv access to access all the environment variables that were stored in the .env file into this js file
+
+//importing all the required modules
 const express = require("express")
 const mysql = require("mysql")
 const path = require("path")
 const body = require("body-parser")
 const bcrypt = require("bcrypt")
+const {auth, requiresAuth} = require("express-openid-connect")
 
 //importing custom functions from other js files into this js file
 const functions = require("./functions.js")
 const database_functions = require("./database.js")
+const { connect } = require("http2")
+const { response } = require("express")
 
 //starting the app
 var app = express()
@@ -28,117 +32,114 @@ var connection = mysql.createConnection({
     host     : process.env.DB_HOST || 'localhost',
     user     : process.env.DB_USER || 'root',
     password : process.env.DB_PASS || '',
-    database : 'cs_ia'
+    database : 'dbe'
   });
 database_functions.connect_db()
 
 //setting up jwt
 app.use(express.json())
 
+//setting up auth0
+const config = {
+    authRequired: false,
+    auth0Logout: true,
+    secret: process.env.SECRET,
+    baseURL: process.env.BASE_URL,
+    clientID: process.env.CLIENT_ID,
+    issuerBaseURL: process.env.ISSUER_BASE_URL
+  };
+app.use(auth(config));
+
+
 //index route
 app.get("/", (request, response)=>{
-    response.render("main")
-})
-
-//account request route
-app.get("/request-account", (request, response)=>{
-    response.render("request")
-})
-app.post("/request-account", urlencodedParser, (request, response)=>{
-    console.log(request.body);
-    console.log(functions.split_string(request.body.email, "@"));
-    console.log(functions.check_email_domain(functions.split_string(request.body.email, "@")));
-
-    if(functions.check_email_domain(functions.split_string(request.body.email, "@"))){
-        connection.query(`SELECT * FROM user_details WHERE fname = '${request.body.first_name}' AND lname = '${request.body.lname}' OR email = '${request.body.email}'`, (error, results)=>{
-            if(error){console.error(error)}
-            else if(results.length > 0){
-                response.render("request", {message: "Account already exists!"})
-            }
-            else{
-                if(functions.check_pass(request.body.password, request.body.re_password)){
-                    console.log("Passwords Match");
-
-                    if(functions.validatePass(request.body.password)){
-                        console.log(validation_result);
-                        response.render("request", {message: `Password does not meet the following requirements ${validation_result}`})
-                    }
-                    else{
-                        bcrypt.genSalt(10, (error, salt)=>{
-                            if(error){console.error(error);}
-                            else{
-                                bcrypt.hash(request.body.password, salt, (error, hash)=>{
-                                    if(error){console.error(error);}
-                                    else{
-                                        console.log(hash);
-                                        database_functions.insert_user_details(request.body.first_name, request.body.last_name, request.body.email, hash)
-
-                                        response.redirect("/login")
-                                    }
-                                })
-                            }
-                        })
-                    }
-                }
-                else{
-                    response.render("request", {message: "Passwords do not match!"})
-                }
-            }
-        })
+    const authenticated_result = request.oidc.isAuthenticated()
+    if(authenticated_result){
+        const username = request.oidc.user.nickname.charAt(0).toUpperCase() + request.oidc.user.nickname.slice(1)
+        console.log(request.oidc.user)
+        response.render("login_home", {user: username})
     }
     else{
-        response.render("request", {message: "Invalid email!"})
-        console.log("invalid email");
+        response.render("main")
     }
 })
+
 
 //login route
 app.get("/login", (request, response)=>{
-    response.render("login")
+    const authenticated_result = request.oidc.isAuthenticated()
+    if(authenticated_result){
+        response.redirect("/view-db-details")
+        console.log(request.oidc.user());
+    }
+    else{
+        response.redirect("/login")
+    }
 })
-app.post("/login", urlencodedParser, (request, response)=>{
-    console.log(request.body);
-    connection.query(`SELECT pass FROM user_details WHERE email = '${request.body.email}'`, (error, results)=>{
-        if(error){
-            console.error(error)
-        }
-        else if (results.length > 0){
-            console.log(results)
-            if(bcrypt.compare(request.body.password, results[0].pass)){
-                console.log(true);
 
-                response.redirect("/view-db-details")
-            }
-            else{
-                response.render("login", {message: "Invalid email or password!"})
-            }
+
+//view db details route -- only accessible to users who have logged in
+app.get("/view-db-details", requiresAuth(), (request, response)=>{
+    connection.query("SELECT * FROM db_details", (error, results)=>{
+        if(error){console.error(error)}
+        else{
+            console.log(results);
+        }
+
+        response.render("view_db", { results })
+    })
+})
+
+//edit db details route -- only accessible to authorized users and admin role users
+app.get("/edit-db-details/:id", requiresAuth(), (request, response)=>{
+    const dbID = request.params.id
+    console.log(dbID)
+    connection.query(`SELECT * FROM db_details WHERE db_id = '${dbID}'`, (error, results)=>{
+        if(error){console.error(error);}
+        else{
+            console.log(results);
+            response.render("edit_db", {id: dbID, results })
+        }
+    })
+})
+app.post("/edit-db-details/:id", urlencodedParser, (request, response)=>{
+    console.log(request.body);
+})
+
+
+//add db details route -- only accesible to admin role users
+app.get("/add-db-details", requiresAuth(), (request, response)=>{
+        response.render("add_db")
+})
+app.post("/add-db-details", urlencodedParser, (request, response)=>{
+    console.log(request.body);
+    const {db_id, db_env, mon_year_added, rfi_rfc, company, business_line, host, os_id, dbms_type, db_port, cluster_id, dba_support_team, created_by, created_date, updated_by, updated_date, comments} = request.body
+    
+    connection.query(`INSERT INTO db_details VALUES('${db_id}', '${db_env}', '${mon_year_added}', '${rfi_rfc}', '${company}', '${business_line}', '${host}', '${os_id}', '${dbms_type}', '${db_port}', '${cluster_id}', '${dba_support_team}', '${created_by}', '${created_date}', '${updated_by}', '${updated_date}', '${comments}')`, (err, results)=>{
+        if(err){console.error(err); response.render("add_db", {fail:"fail"})}
+        else{console.log("success"); response.render("add_db", {success:"success"})}
+    })
+})
+
+
+//search db details route -- only accessible to users who have logged in
+app.get("/search-db-details", requiresAuth(), (request, response)=>{
+        response.render("search_db")
+})
+app.post("/search-db-details", urlencodedParser, (request, response)=>{
+    console.log(request.body);
+    console.log(request.body.field)
+    connection.query(`SELECT * FROM db_details WHERE ${request.body.field.toUpperCase()} = "${request.body.data}"`, (error, results)=>{
+        if(error){console.error(error);}
+        else if(results.length > 0){
+            response.render("search_results", { results })
         }
         else{
-            response.render("login", {message: "Invalid email or password!"})
+            response.render("search_results", {fail : "fail"})
         }
     })
 })
 
-//view db details route -- only accessible to users who have logged in
-app.get("/view-db-details", (request, response)=>{
-    response.render("view_db")
-})
-
-//add db details route -- only accesible to admin role users
-app.get("/add-db-details", (request, response)=>{
-    response.render("add_db")
-})
-app.post("/add-db-details", urlencodedParser, (request, response)=>{
-    console.log(request.body);
-})
-
-//search db details route -- only accessible to users who have logged in
-app.get("/search-db-details", (request, response)=>{
-    response.render("search_db")
-})
-app.post("/search-db-details", urlencodedParser, (request, response)=>{
-    console.log(request.body);
-})
 
 //listener port details
 var PORT = process.env.PORT || 4040

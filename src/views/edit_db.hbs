@@ -10,7 +10,7 @@
     <meta name="keywords" content="Colorlib Templates">
 
     <!-- Title Page-->
-    <title>Add DB Details</title>
+    <title>Edit DB Details</title>
 
     <!-- Icons font CSS-->
     <link href="vendor/mdi-font/css/material-design-iconic-font.min.css" rel="stylesheet" media="all">
@@ -31,29 +31,19 @@
         <div class="wrapper wrapper--w790">
             <div class="card card-5">
                 <div class="card-heading">
-                    <h2 class="title">Add DB Details</h2>
+                    <h2 class="title">Edit Details of DB {{id}}</h2>
                 </div>
+                {{#each results}}
                 <div class="card-body">
                     <form method="POST">
-                        {{#if fail}}
-                            <div class="form-row">
-                                <div class="alert alert-success" role="alert">
-                                    <h2>DATA DID NOT GET INSERTED!</h2>
-                                </div>
-                            </div>
-                        {{/if}}
-                        {{#if success}}
-                            <div class="form-row">
-                                <div class="alert alert-danger" role="alert">
-                                    <h2>DATA INSERTED! <a href="/view-db-details">Click here to view all DB details!</a></h2>
-                                </div>
-                            </div>
-                        {{/if}}
+                        <b><i><h3 style="text-align: center; color: grey;">For each field, type a new value. If no new value is needed, then type the same value shown in the placeholder</h3></i></b>
+                        <br><br>
+
                         <div class="form-row">
                             <div class="name">DB ID</div>
                             <div class="value">
                                 <div class="input-group">
-                                    <input class="input--style-5" type="text" name="db_id">
+                                    <input class="input--style-5" type="text" placeholder="{{db_id}}">
                                 </div>
                             </div>
                         </div>
@@ -61,7 +51,7 @@
                             <div class="name">DB ENV</div>
                             <div class="value">
                                 <div class="input-group">
-                                    <input class="input--style-5" type="text" name="db_env">
+                                    <input class="input--style-5" type="text" placeholder="{{db_env}}">
                                 </div>
                             </div>
                         </div>
@@ -69,7 +59,7 @@
                             <div class="name">MONTH-YEAR ADDED</div>
                             <div class="value">
                                 <div class="input-group">
-                                    <input class="input--style-5" type="text" name="mon_year_added">
+                                    <input class="input--style-5" type="text" placeholder="{{mon_year_added}}">
                                 </div>
                             </div>
                         </div>
@@ -77,7 +67,7 @@
                             <div class="name">RFI_RFC#</div>
                             <div class="value">
                                 <div class="input-group">
-                                    <input class="input--style-5" type="text" name="rfi_rfc">
+                                    <input class="input--style-5" type="text" placeholder="{{rfi_rfc}}">
                                 </div>
                             </div>
                         </div>
@@ -85,7 +75,7 @@
                             <div class="name">COMPANY</div>
                             <div class="value">
                                 <div class="input-group">
-                                    <input class="input--style-5" type="text" name="company">
+                                    <input class="input--style-5" type="text" placeholder="{{company}}">
                                 </div>
                             </div>
                         </div>
@@ -93,7 +83,7 @@
                             <div class="name">BUSINESS LINE</div>
                             <div class="value">
                                 <div class="input-group">
-                                    <input class="input--style-5" type="text" name="business_line">
+                                    <input class="input--style-5" type="text" placeholder="{{business_line}}">
                                 </div>
                             </div>
                         </div>
@@ -101,7 +91,7 @@
                             <div class="name">HOST</div>
                             <div class="value">
                                 <div class="input-group">
-                                    <input class="input--style-5" type="text" name="host">
+                                    <input class="input--style-5" type="text" placeholder="{{host}}">
                                 </div>
                             </div>
                         </div>
@@ -109,7 +99,7 @@
                             <div class="name">OS ID</div>
                             <div class="value">
                                 <div class="input-group">
-                                    <input class="input--style-5" type="text" name="os_id">
+                                    <input class="input--style-5" type="text" placeholder="{{os_id}}">
                                 </div>
                             </div>
                         </div>
@@ -117,7 +107,7 @@
                             <div class="name">DBMS TYPE</div>
                             <div class="value">
                                 <div class="input-group">
-                                    <input class="input--style-5" type="text" name="dbms_type">
+                                    <input class="input--style-5" type="text" placeholder="{{dbms_type}}">
                                 </div>
                             </div>
                         </div>
@@ -125,7 +115,7 @@
                             <div class="name">DB PORT</div>
                             <div class="value">
                                 <div class="input-group">
-                                    <input class="input--style-5" type="text" name="db_port">
+                                    <input class="input--style-5" type="text" placeholder="{{db_port}}">
                                 </div>
                             </div>
                         </div>
@@ -133,7 +123,7 @@
                             <div class="name">CLUSTER ID</div>
                             <div class="value">
                                 <div class="input-group">
-                                    <input class="input--style-5" type="text" name="cluster_id">
+                                    <input class="input--style-5" type="text" placeholder="{{cluster_id}}">
                                 </div>
                             </div>
                         </div>
@@ -141,7 +131,7 @@
                             <div class="name">DBA SUPPORT TEAM</div>
                             <div class="value">
                                 <div class="input-group">
-                                    <input class="input--style-5" type="text" name="dba_support_team">
+                                    <input class="input--style-5" type="text" placeholder="{{dba_support_team}}">
                                 </div>
                             </div>
                         </div>
@@ -151,13 +141,13 @@
                                 <div class="row row-space">
                                     <div class="col-2">
                                         <div class="input-group-desc">
-                                            <input class="input--style-5" type="text" name="created_by">
+                                            <input class="input--style-5" type="text" placeholder="{{created_by}}">
                                             <label class="label--desc">Created By</label>
                                         </div>
                                     </div>
                                     <div class="col-2">
                                         <div class="input-group-desc">
-                                            <input class="input--style-5" type="date" name="created_date">
+                                            <input class="input--style-5" type="date" placeholder="{{created_date}}">
                                             <label class="label--desc">Created Date</label>
                                         </div>
                                     </div>
@@ -170,13 +160,13 @@
                                 <div class="row row-space">
                                     <div class="col-2">
                                         <div class="input-group-desc">
-                                            <input class="input--style-5" type="text" name="updated_by">
+                                            <input class="input--style-5" type="text" placeholder="{{updated_by}}">
                                             <label class="label--desc">Updated By</label>
                                         </div>
                                     </div>
                                     <div class="col-2">
                                         <div class="input-group-desc">
-                                            <input class="input--style-5" type="date" name="updated_date">
+                                            <input class="input--style-5" type="date" placeholder="{{updated_date}}">
                                             <label class="label--desc">Updated Date</label>
                                         </div>
                                     </div>
@@ -187,16 +177,17 @@
                             <div class="name">COMMENTS</div>
                             <div class="value">
                                 <div class="input-group">
-                                    <input class="input--style-5" type="text" name="comments">
+                                    <input class="input--style-5" type="text" placeholder="{{comments}}">
                                     <label class="label--desc">Maximum 255 characters</label>
                                 </div>
                             </div>
                         </div>
                         <div>
-                            <button class="btn btn--radius-2 btn--red" type="submit">Add DB Details</button>
+                            <button class="btn btn--radius-2 btn--red" type="submit">Update DB Details</button>
                         </div>
                     </form>
                 </div>
+                {{/each}}
             </div>
         </div>
     </div>

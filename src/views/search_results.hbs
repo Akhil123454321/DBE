@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-  	<title>View DB Data</title>
+  	<title>Search Results</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -15,14 +15,30 @@
 	<body>
 	<section class="ftco-section">
 		<div class="container">
+
+			{{#if fail}}
+				<div class="row justify-content-center">
+					<div class="col-md-6 text-center mb-5">
+						<div class="alert alert-danger" role="alert">
+							<h2 class="heading-section">No DB</h2>
+						</div>
+					</div>
+				</div>
+			{{/if}}
+
+			{{#if results}}
 			<div class="row justify-content-center">
 				<div class="col-md-6 text-center mb-5">
-					<h2 class="heading-section">Database Details</h2>
+					<div class="alert alert-success" role="alert">
+						<h2 class="heading-section">Search Results</h2>
+					</div>
 				</div>
 			</div>
+			{{/if}}
+
 			<div class="row">
 				<div class="col-md-12">
-					<h4 class="text-center mb-4"><a href="add-db-details">Add Data</a> | <a href="/search-db-details">Search Data</a> | <a href="/logout">Logout</a></h4>
+					<h4 class="text-center mb-4"><a href="/">Home</a> | <a href="/search-db-details">Back to Search</a> | <a href="/view-db-details">View All Data </a> |<a href="/logout">Logout</a></h4>
 					<div class="table-wrap">
 						<table class="table">
 					    <thead class="thead-primary">
@@ -42,7 +58,6 @@
 							<th scope="col">Created_By</th>
 							<th scope="col">Created_Date</th>
 							<th scope="col">Updated_Date</th>
-					        <th scope="col">Edit</th>
 					      </tr>
 					    </thead>
 					    <tbody>
@@ -63,7 +78,6 @@
 							<td scope="col">{{created_by}}</td>
 							<td scope="col">{{created_date}}</td>
 							<td scope="col">{{updated_date}}</td>
-					        <td><a href="/edit-db-details/{{db_id}}" class="btn btn-primary">Edit DB</button></td>
 					      </tr>
 					      {{/each}}
 					    </tbody>

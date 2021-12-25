@@ -14,8 +14,12 @@
           <div class="input-field first-wrap">
             <div class="input-select">
               <select data-trigger="" name="field">
-                <option placeholder="" value="db_name">DB Name</option>
+                <option placeholder="" value="db_id">DB ID</option>
                 <option value="host">Host</option>
+                <option value="cluster_id">CLuster ID</option>
+                <option value="os_id">OS ID</option>
+                <option value="dbms_type">DBMS Type</option>
+                <option value="business_line">Business Line</option>
               </select>
             </div>
           </div>
@@ -31,7 +35,6 @@
           </div>
         </div>
       </form>
-    </div>
     <script src="../search_db/js/extention/choices.js"></script>
     <script>
       const choices = new Choices('[data-trigger]',
@@ -41,5 +44,5 @@
       });
 
     </script>
-  </body><!-- This templates was made by Colorlib (https://colorlib.com) -->
+  </body>
 </html>
