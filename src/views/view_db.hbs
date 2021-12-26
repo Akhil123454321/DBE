@@ -43,6 +43,7 @@
 							<th scope="col">Created_Date</th>
 							<th scope="col">Updated_Date</th>
 					        <th scope="col">Edit</th>
+							<th scope="col">Delete</th>
 					      </tr>
 					    </thead>
 					    <tbody>
@@ -64,6 +65,7 @@
 							<td scope="col">{{created_date}}</td>
 							<td scope="col">{{updated_date}}</td>
 					        <td><a href="/edit-db-details/{{db_id}}" class="btn btn-primary">Edit DB</button></td>
+							<td><a href="/delete-db-details/{{db_id}}" class="btn btn-primary">Delete DB</button></td>
 					      </tr>
 					      {{/each}}
 					    </tbody>
@@ -71,11 +73,12 @@
 					</div>
 				</div>
 			</div>
-			{{#if message}}
+			{{#if failtodel}}
 				<div class="card mx-auto">
 					<div class="card-body">
-					<h1>There are no database details added!</h1>
-					<a href="/add-db-details" class="btn btn-success btn-block">Add a DB!</a>
+						<div class="alert alert-danger" role="alert">
+							<h1>Could not delete DB!</h1>
+						</div>
 				</div>
 			{{/if}}
 		</div>
